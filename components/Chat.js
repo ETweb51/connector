@@ -1,8 +1,59 @@
 import React from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Platform, KeyboardAvoidingView, View } from 'react-native';
 import 'react-native-gesture-handler';
+import { Bubble, GiftedChat } from 'react-native-gifted-chat';
 
 export default class Chat extends React.Component {
+
+    constructor() {
+        super();
+        this.state = {
+          messages: [],
+        }
+      }
+
+    componentDidMount() {
+        let name = this.props.route.params.name;
+        this.setState({
+          messages: [
+            {
+              _id: 1,
+              text: `Hello ${name}`,
+              createdAt: new Date(),
+              user: {
+                _id: 2,
+                name: 'React Native',
+                avatar: 'https://placeimg.com/140/140/any',
+              },
+            },
+            {
+                _id: 3,
+                text: `${name} has entered the chat`,
+                createdAt: new Date(),
+                system: true
+            }
+          ],
+        })
+    }
+
+    onSend(messages = []) {
+        this.setState(previousState => ({
+            messages: GiftedChat.append(previousState.messages,messages)
+        }))
+    }
+
+    renderBubble(props) {
+        return (
+            <Bubble
+                {...props}
+                wrapperStyle ={{
+                    right: {
+                        backgroundColor: "#000",
+                    },
+                }}
+            />
+        );
+    }
     
     render() {
         let name = this.props.route.params.name;
@@ -11,54 +62,22 @@ export default class Chat extends React.Component {
         this.props.navigation.setOptions({title: name});
 
         return (
-            <View style={[ styles.container, {backgroundColor: backgroundColor}]}>
-                <Text style={styles.chat}>Chat</Text>
-                <Text style={styles.greeting}>Hello {name}, welcome to Line!</Text>
-                <Pressable style={styles.button} onPress={() => this.props.navigation.navigate('Start')}>
-                    <Text style={styles.chatButton}>Go Back</Text>
-                </Pressable>
+            <View style={{ flex: 1, backgroundColor: backgroundColor }}>
+                <GiftedChat
+                    renderBubble ={this.renderBubble.bind(this)}
+                    messages={this.state.messages}
+                    onSend={messages => this.onSend(messages)}
+                    user={{
+                        _id: 1,
+                    }}
+                />
+                { Platform.OS === 'android' ? 
+                <KeyboardAvoidingView behavior="height" /> 
+                : null}
             </View>
         );
     }
 }
 
 const styles = StyleSheet.create({
-
-    container: {
-        flex: 1,
-        alignItems: "center"
-    },
-
-    chat: {
-        fontSize: 45,
-        fontWeight: "600",
-        color: "#fff",
-        textAlign: "center",
-        marginTop: 200,
-        marginBottom: 100
-    },
-
-    greeting: {
-        alignSelf: "center",
-        color: "#fff",
-        fontSize: 24,
-        fontWeight: "600",
-        marginBottom: 100
-    },
-
-    button: {
-        height: 50,
-        width: "88%",
-        alignSelf: "center",
-        backgroundColor: "#757083",
-        borderRadius: 3,
-        justifyContent: "center"
-    },
-
-    chatButton: {
-        alignSelf: "center",
-        color: "#fff",
-        fontSize: 16,
-        fontWeight: "600"
-    }
 });
