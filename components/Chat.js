@@ -4,7 +4,7 @@ import 'react-native-gesture-handler';
 import { Bubble, GiftedChat } from 'react-native-gifted-chat';
 import firebase from 'firebase';
 import 'firebase/firestore';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 export default class Chat extends React.Component {
 
@@ -32,7 +32,6 @@ export default class Chat extends React.Component {
         }
 
         this.referenceChatMessages = firebase.firestore().collection("messages");
-        this.referenceChatUser = null;
     }
 
     componentDidMount() {
@@ -43,14 +42,12 @@ export default class Chat extends React.Component {
             }
             this.setState({
                 uid: user.uid,
-                messages: [],
                 user: {
                   _id: user.uid,
                   name: name,
                   avatar: 'https://placeimg.com/140/140/any',
                 },
             });
-            this.referenceChatUser = firebase.firestore().collection('messages').where("uid", "==", this.state.uid);
             this.unsubscribe = this.referenceChatMessages.orderBy("createdAt", "desc").onSnapshot(this.onCollectionUpdate);
         });
     }
@@ -64,7 +61,7 @@ export default class Chat extends React.Component {
         this.setState(previousState => ({
             messages: GiftedChat.append(previousState.messages, messages)
         })),
-        this.addMessage();
+        this.addMessage(messages);
     }
 
     onCollectionUpdate = (querySnapshot) => {
@@ -82,10 +79,9 @@ export default class Chat extends React.Component {
         this.setState({ messages });
     }
 
-    addMessage() {
-        const message = this.state.messages[0];
+    addMessage = (messages) => {
+        const message = messages[0];
         this.referenceChatMessages.add({
-            uid: this.state.uid,
             _id: message._id,
             text: message.text,
             createdAt: message.createdAt,
