@@ -2,8 +2,8 @@
 
 Line is a basic chat-app built with React Native. In addition to chat the app provides the ability to share photos from your media, to take photos with you camera and share your current location.
 
-<img src="./assets/readme.jpg">
-<img src="./assets/readmee.jpg">
+<img width="250" heigth="500" src="./assets/readme.jpg">
+<img width="250" heigth="500" src="./assets/readmee.jpg">
 
 
 <h1>Stack</h1>
