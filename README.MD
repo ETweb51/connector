@@ -1,8 +1,10 @@
 <h1>Line</h1>
+
 Line is a basic chat-app built with React Native. In addition to chat the app provides the ability to share photos from your media, to take photos with you camera and share your current location.
 
 
 <h1>Stack</h1>
+
 - Node.js
 - React Native
 - Expo
@@ -10,6 +12,7 @@ Line is a basic chat-app built with React Native. In addition to chat the app pr
 - Google Firebase Firestore
 
 <h1>How to use</h1>
+
 1. Install node.js and npm
 2. Install Expo `npm install --global expo-cli`
 3. Download the code
