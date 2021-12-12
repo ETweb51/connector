@@ -1,11 +1,13 @@
 import React from 'react';
-import { StyleSheet, Platform, KeyboardAvoidingView, View } from 'react-native';
+import { Platform, KeyboardAvoidingView, View } from 'react-native';
 import 'react-native-gesture-handler';
 import { Bubble, GiftedChat, InputToolbar } from 'react-native-gifted-chat';
 import firebase from 'firebase';
 import 'firebase/firestore';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import NetInfo from '@react-native-community/netinfo';
+import CustomActions from './CustomActions';
+import MapView from 'react-native-maps';
 
 export default class Chat extends React.Component {
 
@@ -18,8 +20,10 @@ export default class Chat extends React.Component {
         _id: '',
         name: '',
         avatar: '',
-        isConnected: false
       },
+      isConnected: false,
+      image: null,
+      location: null
     };
 
     if (!firebase.apps.length) {
@@ -63,7 +67,7 @@ export default class Chat extends React.Component {
         this.saveMessages();
 
       } else {
-        this.setState({ isConnected: false});
+        this.setState({ isConnected: false });
         this.getMessages();
       }
     });
@@ -90,9 +94,11 @@ export default class Chat extends React.Component {
       let data = doc.data();
       messages.push({
         _id: data._id,
-        text: data.text,
+        text: data.text || "",
         createdAt: data.createdAt.toDate(),
-        user: data.user
+        user: data.user,
+        image: data.image || null,
+        location: data.location || null
       });
     });
     this.setState({ messages });
@@ -102,9 +108,11 @@ export default class Chat extends React.Component {
     const message = this.state.messages[0];
     this.referenceChatMessages.add({
       _id: message._id,
-      text: message.text,
+      text: message.text || "",
       createdAt: message.createdAt,
       user: this.state.user,
+      image: message.image || null,
+      location: message.location || null
     });
   }
 
@@ -115,9 +123,9 @@ export default class Chat extends React.Component {
       this.setState({
         messages: JSON.parse(messages)
       });
-      } catch (error) {
-        console.log(error.message);
-      }
+    } catch (error) {
+      console.log(error.message);
+    }
   };
 
   saveMessages = async () => {
@@ -139,7 +147,7 @@ export default class Chat extends React.Component {
     }
   }
 
-  renderInputToolbar(props) {
+  renderInputToolbar = (props) => {
     if (this.state.isConnected == false) {
     } else {
       return <InputToolbar {...props} />;
@@ -159,6 +167,28 @@ export default class Chat extends React.Component {
       />
     );
   }
+
+  renderCustomActions = (props) => { 
+    return <CustomActions {...props} />;
+  };
+
+  renderCustomView = (props) => {
+    const { currentMessage } = props;
+    if (currentMessage.location) {
+      return (
+        <MapView
+          style={{ width: 150, height: 100, borderRadius: 13, margin: 3 }}
+          region={{
+            latitude: currentMessage.location.latitude,
+            longitude: currentMessage.location.longitude,
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421,
+          }}
+        />
+      );
+    }
+    return null;
+  }
     
   render() {
     let name = this.props.route.params.name;
@@ -169,8 +199,10 @@ export default class Chat extends React.Component {
     return (
       <View style={{ flex: 1, backgroundColor: backgroundColor }}>
         <GiftedChat
-          renderInputToolbar={this.renderInputToolbar.bind(this)}
-          renderBubble={this.renderBubble.bind(this)}
+          renderCustomView={this.renderCustomView}
+          renderActions={this.renderCustomActions}
+          renderInputToolbar={this.renderInputToolbar}
+          renderBubble={this.renderBubble}
           messages={this.state.messages}
           onSend={messages => this.onSend(messages)}
           user={this.state.user}
