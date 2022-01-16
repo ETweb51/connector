@@ -16,7 +16,7 @@ export default class Start extends React.Component {
         return (
             <View style={styles.container}>
                 <ImageBackground source={backgroundImage} resizeMode="cover" style={styles.backgroundImage}>
-                    <Text style={styles.title}>Line</Text>
+                    <Text style={styles.title}>Connector</Text>
                     <View style={styles.inputContainer}>
                         <TextInput
                             accessible={true}
