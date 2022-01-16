@@ -2,7 +2,6 @@
 
 Connector is a basic chat-app built with React Native. In addition to chat the app provides the ability to share photos from your media, to take photos with you camera and share your current location.
 
-<img width="250" heigth="500" src="./assets/readme.jpg">
 <img width="250" heigth="500" src="./assets/readmee.jpg">
 
 
